@@ -35,6 +35,8 @@
     "no-underscore-dangle": "off",
     "import/no-cycle": "off",
     "unicorn/prefer-export-from": "off",
-    "spaced-comment": "off"
+    "spaced-comment": "off",
+    "no-unused-vars": "warn",
+    "no-undef": "warn"
   }
 }
