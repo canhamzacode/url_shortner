@@ -3,6 +3,7 @@ import { logger } from './services';
 
 const app = express();
 const port = 3000;
+const number = 0;
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');

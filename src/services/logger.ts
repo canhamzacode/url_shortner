@@ -3,7 +3,7 @@ import winston from 'winston';
 const { combine, timestamp, printf } = winston.format;
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: process.env.LOG_LEVEL,
   format: combine(
     timestamp(),
     printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
