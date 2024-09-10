@@ -3,6 +3,7 @@ import { logger } from '../services';
 import validUrl from 'valid-url';
 import { generateRandomString, HTTP_STATUS } from '../utils';
 import URL_DB from '../model/url';
+import mongoose from 'mongoose';
 
 const shortenUrl = async (req: Request, res: Response) => {
   try {
@@ -40,12 +41,10 @@ const shortenUrl = async (req: Request, res: Response) => {
       shortUrl: `https://short.ner/${randomName}`
     });
 
-    return res
-      .status(HTTP_STATUS.CREATED.code)
-      .send({
-        message: 'URL shortened successfully',
-        data: { shortUrl: createdUrl.shortUrl, id: createdUrl._id }
-      });
+    return res.status(HTTP_STATUS.CREATED.code).send({
+      message: 'URL shortened successfully',
+      data: { shortUrl: createdUrl.shortUrl, id: createdUrl._id }
+    });
   } catch (error) {
     logger.error(error);
     return res
@@ -54,4 +53,35 @@ const shortenUrl = async (req: Request, res: Response) => {
   }
 };
 
-export { shortenUrl };
+const getAllUrl = async (_, res: Request) => {
+  const urls = await URL_DB.find();
+  const mappedUrls = urls.map(({ _id: id, originalUrl, shortUrl, createdAt }) => ({
+    id,
+    originalUrl,
+    shortUrl,
+    createdAt
+  }));
+
+  res.status(HTTP_STATUS.OK.code).json({ data: mappedUrls });
+};
+
+const getUrlById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(HTTP_STATUS.BAD_REQUEST.code).send({ message: 'Provide a valid URL ID' });
+  }
+
+  const url = await URL_DB.findById(id);
+  if (!url) {
+    return res.status(HTTP_STATUS.NOT_FOUND.code).send({ message: 'URL not found' });
+  }
+
+  const { _id, customName, shortUrl, originalUrl, createdAt } = url;
+
+  return res
+    .status(HTTP_STATUS.OK.code)
+    .send({ data: { id: _id, customName, shortUrl, originalUrl, createdAt } });
+};
+
+export { shortenUrl, getAllUrl, getUrlById };

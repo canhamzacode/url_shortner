@@ -1,15 +1,19 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express from 'express';
+import express, { Response } from 'express';
 import { logger } from './services';
 import { connectDB } from './db/connect';
 import router from './routes';
+import { HTTP_STATUS } from './utils';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/v1', router);
+app.use((_, res: Response) => {
+  res.status(HTTP_STATUS.NOT_FOUND.code).send({ message: HTTP_STATUS.NOT_FOUND.message });
+});
 
 const startServer = async () => {
   try {
