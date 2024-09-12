@@ -17,11 +17,11 @@
     "dotenv": "^16.4.5",
     "eslint-plugin-prettier": "^5.2.1",
     "express": "^4.19.2",
+    "express-validator": "^7.2.0",
     "globals": "^15.9.0",
     "mongoose": "^8.6.1",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.4.0",
-    "valid-url": "^1.0.9",
     "winston": "^3.13.1"
   },
   "devDependencies": {
