@@ -2,33 +2,27 @@ import { Response, Request } from 'express';
 import { logger } from '../services';
 import { generateRandomString, HTTP_STATUS } from '../utils';
 import URL_DB from '../model/url';
+import { BASE_URL } from '../constant';
 
 const shortenUrl = async (req: Request, res: Response) => {
   try {
     const { url, customName } = req.body;
 
-    const randomName = customName ? customName.replace(/\s/g, '-') : generateRandomString();
+    const nameOrUrlUniqueness = await URL_DB.findOne({
+      $or: [{ originalUrl: url }, { customName }]
+    });
 
-    const existingUrl = await URL_DB.findOne({ originalUrl: url });
-
-    if (existingUrl) {
+    if (nameOrUrlUniqueness) {
       return res.status(HTTP_STATUS.CONFLICT.code).send({
-        message: 'URL already shortened',
-        data: { url, customName: existingUrl.customName }
+        message: 'URL already shortened or custom name already taken'
       });
     }
-
-    const existingCustomNameUrl = await URL_DB.findOne({ customName: randomName });
-    if (existingCustomNameUrl) {
-      return res
-        .status(HTTP_STATUS.CONFLICT.code)
-        .send({ message: 'Custom name already taken, try another one' });
-    }
+    const randomName = customName ? customName.replace(/\s/g, '-') : generateRandomString();
 
     const createdUrl = await URL_DB.create({
       originalUrl: url,
       customName: randomName,
-      shortUrl: `https://short.ner/${randomName}`
+      shortUrl: `${BASE_URL}/${randomName}`
     });
 
     return res.status(HTTP_STATUS.CREATED.code).send({
