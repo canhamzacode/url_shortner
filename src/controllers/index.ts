@@ -1,8 +1,7 @@
 import { Response, Request } from 'express';
 import { logger } from '../services';
-import { generateRandomString, HTTP_STATUS } from '../utils';
+import { BASE_URL, generateRandomString, HTTP_STATUS } from '../utils';
 import URL_DB from '../model/url';
-import { BASE_URL } from '../constant';
 
 const shortenUrl = async (req: Request, res: Response) => {
   try {
@@ -54,4 +53,41 @@ const getUrlById = async (req: Request, res: Response) => {
   return res.status(HTTP_STATUS.OK.code).send({ data: url });
 };
 
-export { shortenUrl, getAllUrl, getUrlById };
+const updateUrl = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { customName, url } = req.body;
+
+  const urlExist = await URL_DB.findById(id);
+
+  if(!urlExist){
+    return res.status(HTTP_STATUS.BAD_REQUEST).send({messge: "URL not found"});
+  };
+
+  const updateFields: {customName?: string, originalUrl?:string, shortUrl?: string} = {};
+  if (customName) {
+    updateFields.customName = customName;
+    updateFields.shortUrl = `${BASE_URL}/${customName}`; 
+  }
+
+  if (url) {
+    updateFields.originalUrl = url;
+  }
+  const updateUrl = await URL_DB.findOneAndUpdate(id, updateFields, {new: true});
+  
+  return res.status(HTTP_STATUS.OK).send({message:"Url updated successfully", data: updateUrl});
+}
+
+const deleteUrl = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const url = await URL_DB.findById(id);
+
+  if (!url) {
+    return res.status(HTTP_STATUS.NOT_FOUND.code).send({ message: 'URL not found' });
+  };
+
+  await URL_DB.findByIdAndDelete(id);
+
+  return res.status(HTTP_STATUS.OK.code).send({ message: 'URL deleted successfully', data: url });
+};
+
+export { shortenUrl, getAllUrl, getUrlById, updateUrl, deleteUrl };
