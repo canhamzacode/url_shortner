@@ -72,9 +72,9 @@ const updateUrl = async (req: Request, res: Response) => {
   if (url) {
     updateFields.originalUrl = url;
   }
-  const updateUrl = await URL_DB.findOneAndUpdate(id, updateFields, {new: true});
+  const updateUrl = await URL_DB.findByIdAndUpdate(id, updateFields, {new: true});
   
-  return res.status(HTTP_STATUS.OK).send({message:"Url updated successfully", data: updateUrl});
+  return res.status(HTTP_STATUS.OK.code).send({message:"Url updated successfully", data: updateUrl});
 }
 
 const deleteUrl = async (req: Request, res: Response) => {
