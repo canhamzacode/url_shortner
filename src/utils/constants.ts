@@ -13,3 +13,5 @@ export const HTTP_STATUS = {
 };
 
 export const BASE_URL = "https://short.ner";
+
+export const formatName = (name: string) => name.replace(/\s/g, '-');

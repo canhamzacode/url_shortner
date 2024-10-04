@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import { logger } from '../services';
-import { BASE_URL, generateRandomString, HTTP_STATUS } from '../utils';
+import { BASE_URL, formatName, generateRandomString, HTTP_STATUS } from '../utils';
 import URL_DB from '../model/url';
 
 const shortenUrl = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ const shortenUrl = async (req: Request, res: Response) => {
         message: 'URL already shortened or custom name already taken'
       });
     }
-    const randomName = customName ? customName.replace(/\s/g, '-') : generateRandomString();
+    const randomName = customName ? formatName(customName) : generateRandomString();
 
     const createdUrl = await URL_DB.create({
       originalUrl: url,
@@ -64,9 +64,12 @@ const updateUrl = async (req: Request, res: Response) => {
   };
 
   const updateFields: {customName?: string, originalUrl?:string, shortUrl?: string} = {};
+  let formatedName:string;
+
   if (customName) {
-    updateFields.customName = customName;
-    updateFields.shortUrl = `${BASE_URL}/${customName}`; 
+    formatedName = formatName(customName);
+    updateFields.customName = formatedName;
+    updateFields.shortUrl = `${BASE_URL}/${formatedName}`; 
   }
 
   if (url) {
