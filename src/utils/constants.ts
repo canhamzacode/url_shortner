@@ -11,3 +11,7 @@ export const HTTP_STATUS = {
   INTERNAL_SERVER_ERROR: { code: 500, message: 'Internal Server Error' },
   BAD_GATEWAY: { code: 502, message: 'Bad Gateway' }
 };
+
+export const BASE_URL = "https://short.ner";
+
+export const formatName = (name: string) => name.replace(/\s/g, '-');
