@@ -36,10 +36,10 @@ const shortenUrl = async (req: Request, res: Response) => {
   }
 };
 
-const getAllUrl = async (_, res: Request) => {
+const getAllUrl = async (_, res: Response) => {
   const urls = await URL_DB.find();
 
-  res.status(HTTP_STATUS.OK.code).json({ data: urls });
+  return res.status(HTTP_STATUS.OK.code).send({ data: urls });
 };
 
 const getUrlById = async (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ const updateUrl = async (req: Request, res: Response) => {
   const urlExist = await URL_DB.findById(id);
 
   if(!urlExist){
-    return res.status(HTTP_STATUS.BAD_REQUEST).send({messge: "URL not found"});
+    return res.status(HTTP_STATUS.BAD_REQUEST.code).send({messge: "URL not found"});
   };
 
   const updateFields: {customName?: string, originalUrl?:string, shortUrl?: string} = {};
