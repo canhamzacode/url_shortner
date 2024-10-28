@@ -1,40 +1,28 @@
-version: '3.9'
-
 services:
-  # MongoDB service
-  mongo_db:
-    image: mongo:latest
-    restart: always
+  mongo:
+    image: mongo
+    restart: unless-stopped
     ports:
-      - "27017:27017" # Direct mapping for MongoDB port
+      - ${MONGO_PORT}:27017 # Direct mapping for MongoDB port
     env_file:
       - .env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     volumes:
-      - mongo_data:/data/db
+      - ./data:/data/db
 
-  # Node.js API service
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: URL_SHORTNER_API
     depends_on:
-      - mongo_db
+      - mongo
     ports:
-      - 8000:8000
+      - "8000:8000"
+    expose:
+      - ${PORT}
     env_file:
       - .env
-    # volumes:
-    #   - .:/app
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  mongo_data:
+    volumes:
+      - ./src:/app/src

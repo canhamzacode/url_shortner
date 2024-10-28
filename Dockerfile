@@ -1,20 +1,16 @@
-# Use a Node.js 20.18.0 base image
-FROM node:20.18.0
+FROM node:alpine
 
 # Set working directory inside the container
-WORKDIR /app
+WORKDIR /usr/src
 
 # Copy package.json and yarn.lock to install dependencies
 COPY package.json yarn.lock ./
 
 # Install dependencies using yarn
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # Copy the source code into the container
-COPY src /app/src
-
-# Expose the port that the app will run on
-EXPOSE 8000
+COPY . .
 
 # Start the application
 CMD ["yarn", "dev"]
