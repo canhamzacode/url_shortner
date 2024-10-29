@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
     "lint": "npx eslint --max-warnings 0 . && tsc --noEmit",
-    "build": "tsc"
+    "build": "tsc",
+    "docker:start": "docker compose up -d && docker logs -f url-shortener-api"
   },
   "keywords": [],
   "author": "",

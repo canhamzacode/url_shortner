@@ -7,7 +7,7 @@ WORKDIR /usr/src
 COPY package.json yarn.lock ./
 
 # Install dependencies using yarn
-RUN yarn install
+RUN yarn install --ignore-engines
 
 # Copy the source code into the container
 COPY . .
