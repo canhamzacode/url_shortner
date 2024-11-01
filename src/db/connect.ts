@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 import { logger } from '../services';
 
-const connectDB = (url: string) => {
+const connectDB = async (url: string) => {
   try {
-    return mongoose.connect(url);
+    await mongoose.connect(url);
+    logger.info('Connected to DB');
   } catch (error) {
     logger.error(`Error connecting to DB: ${error}`);
   }

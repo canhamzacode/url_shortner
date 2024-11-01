@@ -11,6 +11,9 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/v1', router);
+app.get('/', (_, res: Response) => {
+  res.send('Welcome to the URL shortener API, Made by Hamzat Abdul-Muizz');
+});
 app.use((_, res: Response) => {
   res.status(HTTP_STATUS.NOT_FOUND.code).send({ message: HTTP_STATUS.NOT_FOUND.message });
 });
